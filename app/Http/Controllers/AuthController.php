@@ -11,28 +11,26 @@ use App\Models\User;
 class AuthController extends Controller
 {
     public function register(Request $request){
-        // $fields = $request->validate([
-        //     'name' => 'required|string',
-        //     'email' => 'required|string',
-        //     'password' => 'required|string|confirmed'
-        // ]);
+        $fields = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|string',
+            'password' => 'required|string|confirmed'
+        ]);
 
-        // $user = User::create([
-        //     'name' => $fields['name'],
-        //     'email' => $fields['email'],
-        //     'password' => bcrypt($fields['password'])
-        // ]);
+        $user = User::create([
+            'name' => $fields['name'],
+            'email' => $fields['email'],
+            'password' => bcrypt($fields['password'])
+        ]);
 
-        // $token = $user->createToken($request->name)->plainTextToken;
+        $token = $user->createToken($request->name)->plainTextToken;
 
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $token
-        // ];
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
 
-        // return response($response, 201);
-
-        dd($request->all());
+        return response($response, 201);
         
     }
 
