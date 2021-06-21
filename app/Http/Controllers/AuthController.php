@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-
+use App\Traits\ApiResponser;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -45,14 +46,14 @@ class AuthController extends Controller
         ]);
 
         //check email
-        $user = User::where('email', $fields['email'])->first();
+        // $user = User::where('email', $fields['email'])->first();
 
-        //check password
-        if(!$user || !Hash::check($fields['password'], $user->password)){
-            return response([
-                'message' => 'Bad creds'
-            ], 401);
-        }
+        // //check password
+        // if(!$user || !Hash::check($fields['password'], $user->password)){
+        //     return response([
+        //         'message' => 'Bad creds'
+        //     ], 401);
+        // }
 
         // $token = $user->createToken($request->name)->plainTextToken;
 
@@ -63,6 +64,9 @@ class AuthController extends Controller
 
         // // return response($response, 201);
         // return response()->json(User::all());
+        if (!Auth::attempt($fields)) {
+            return $this->error('Credentials not match', 401);
+        }
 
         return $this->success([
             'token' => auth()->user()->createToken('API Token')->plainTextToken
