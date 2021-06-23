@@ -5,38 +5,55 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+
 
 class AuthController extends Controller
 {
     public function register(Request $request){
-        $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email',
-            'password' => 'required|string',
+        // $fields = $request->validate([
+        //     'name' => 'required|string',
+        //     'email' => 'required|string|email',
+        //     'password' => 'required|string',
             
-        ]);
-
-        $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
-        ]);
-
-        $token = $user->createToken($request->name)->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response($response, 201);
-        // return User::create([
-        //     'name' => $request->input('name'),
-        //     'email' => $request->input('email'),
-        //     'password' => Hash::make($request->input('password')),
-        //     'voorkeur' => 'actie'
         // ]);
+
+        // $user = User::create([
+        //     'name' => $fields['name'],
+        //     'email' => $fields['email'],
+        //     'password' => bcrypt($fields['password'])
+        // ]);
+
+        // $token = $user->createToken($request->name)->plainTextToken;
+
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $token
+        // ];
+
+        // return response($response, 201);
+        
+        $validator = Validator::make($request-all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['status_code' => 400, 'message' => 'Bad Request']);
+        }
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'User created successfully'
+        ])
     }
 
     public function login(Request $request){
