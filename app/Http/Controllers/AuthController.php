@@ -12,7 +12,7 @@ class AuthController extends Controller
     public function register(Request $request){
         $fields = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|string',
+            'email' => 'required|string|email',
             'password' => 'required|string'
         ]);
 
@@ -22,16 +22,15 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password'])
         ]);
 
-        // $token = $user->createToken($request->name)->plainTextToken;
+        $token = $user->createToken($request->name)->plainTextToken;
 
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $token
-        // ];
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
 
-        // return response($response, 201);
-        $accessToken = $user->createToken('authToken')->accessToken;
-        return response([ 'user' => $user, 'access_token' => $accessToken], 200);
+        return response($response, 201);
+        
     }
 
     public function login(Request $request){
