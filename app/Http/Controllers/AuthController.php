@@ -22,15 +22,16 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password'])
         ]);
 
-        $token = $user->createToken($request->name)->plainTextToken;
+        // $token = $user->createToken($request->name)->plainTextToken;
 
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $token
+        // ];
 
-        return response($response, 201);
-        
+        // return response($response, 201);
+        $accessToken = $user->createToken('authToken')->accessToken;
+        return response([ 'user' => $user, 'access_token' => $accessToken], 200);
     }
 
     public function login(Request $request){
